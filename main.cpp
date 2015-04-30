@@ -16,33 +16,32 @@ int main(int argc, const char * argv[]) {
     //read file in to pass to puzzle constructor
     
 
-    ifstream file("/Users/Katelynn/xCode projects/Sudoku/Sudoku/grid1.txt"); //input file stream for getting info from the sudoku file
-    string line;
+    ifstream file;
+    file.open("/Users/Katelynn/xCode projects/Sudoku/Sudoku/sodoku.txt"); //input file stream for getting info from the sudoku file
     string grid;
     string gridStr[Puzzle::VALUES]; //string array
+    
     int sum = 0;
-    if(file.is_open()){
-        while(getline(file,line)){
-            for(int i=0; i<Puzzle::VALUES; i++){
-                getline(file, gridStr[i]);
-            }
-            Puzzle *current = new Puzzle(gridStr);
-            cout << grid << "\n";
-            Puzzle *solution = current->solve();
-            if(solution != NULL){
-                cout << solution;
-            }
-            else {
-                cout << "Solution found :)\n";
-            }
-            sum += solution->digitCode();
+
+    while(!file.eof()){
+        getline(file, grid);
+        for(int i=0; i<Puzzle::VALUES; i++){
+            getline(file, gridStr[i]);
         }
-        cout << "Sudoku sum = " << sum << endl;
-        file.close();
+        Puzzle *current = new Puzzle(gridStr);
+        cout << grid << "\n";
+        Puzzle *solution = current->solve();
+        if(solution != NULL){
+            cout << solution;
+        }
+        else {
+            cout << "Solution found :)\n";
+        }
+        sum += solution->digitCode(); //some kind of error with digitCode() function
     }
-    else {
-        cout << "derp";
-    }
+    cout << "Sudoku sum = " << sum << endl;
+    file.close();
+
     
     
     //read in the file line by line

@@ -38,16 +38,55 @@ Puzzle::Puzzle(Puzzle *orig){
     }
 }
 
+bool Puzzle::solutionFound(){
+    for(int i = 0; i < CELLY; i++){
+        if(cell[i] == 0){
+            return false;
+        }
+    }
+    return true;
+}
+
 Puzzle* Puzzle::solve(){
     return solveRec(0, this);
 }
 
 Puzzle* Puzzle::solveRec(int pos, Puzzle *grid){
-    return grid;
+    if(pos >= CELLY){
+        if(grid->solutionFound()){
+            return grid;
+        }
+        else {
+            return NULL;
+        }
+    }
+    else {
+        if(grid->cell[pos] != 0){
+            return solveRec(pos+1, grid);
+        }
+        else{
+            for(int val = 1; val <= VALUES; val++){
+                if(grid->possible[pos][val]){
+                    Puzzle *newGrid = new Puzzle(grid);
+                    newGrid->cell[pos] = val;
+                    newGrid->markPossible(pos, val);
+                    Puzzle *solution = solveRec(pos+1, newGrid);
+                    if(solution != NULL){
+                        return solution;
+                    }
+                    delete newGrid;
+                }
+            }
+            return NULL;
+        }
+    }
 }
 
 int Puzzle::digitCode(){
-    return cell[0]*100 + cell[1]*10 + cell[2];
+    if(cell[0] != 0 && cell[1]!=0 && cell[2]!=0){
+        return cell[0]*100 + cell[1]*10 + cell[2];
+    }
+    return -1;
 }
 
 void Puzzle::markPossible(int index, int value){
@@ -79,7 +118,7 @@ std::ostream &operator<<(std::ostream &output, Puzzle *grid){
     for(int i = 0; i < grid->CELLY; i++){
         output << grid->cell[i] << ' ';
         if((i % grid->VALUES) == grid->VALUES-1){
-            //NOT DONE!!
+            output << std::endl;
         }
     }
     return output;
